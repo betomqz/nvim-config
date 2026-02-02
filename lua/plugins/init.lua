@@ -5,5 +5,6 @@ require('lazy').setup {
   { import = 'plugins.telescope' },
   { import = 'plugins.nvim-lspconfig' },
   { import = 'plugins.conform' },
+  { import = 'plugins.blink' },
   { import = 'plugins.which-key' },
 }
