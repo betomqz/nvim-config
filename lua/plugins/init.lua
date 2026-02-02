@@ -1,4 +1,5 @@
 require('lazy').setup {
+  { import = 'plugins.catppuccin' },
   { import = 'plugins.guess-indent' },
   { import = 'plugins.gitsigns' },
   { import = 'plugins.telescope' },
