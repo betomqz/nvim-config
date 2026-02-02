@@ -88,7 +88,7 @@ return {
       lua_ls = {},
       -- clangd = {},
       -- gopls = {},
-      -- pyright = {},
+      pyright = {},
       -- rust_analyzer = {},
       --
       -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -108,6 +108,7 @@ return {
     local mason_packages = {
       'lua-language-server', -- Lua Language server
       'stylua', -- Used to format Lua code
+      'pyright',
     }
 
     require('mason-tool-installer').setup { ensure_installed = mason_packages }
