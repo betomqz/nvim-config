@@ -7,4 +7,5 @@ require('lazy').setup {
   { import = 'plugins.conform' },
   { import = 'plugins.blink' },
   { import = 'plugins.which-key' },
+  { import = 'plugins.todo-comments' },
 }
