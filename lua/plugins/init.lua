@@ -8,4 +8,5 @@ require('lazy').setup {
   { import = 'plugins.blink' },
   { import = 'plugins.which-key' },
   { import = 'plugins.todo-comments' },
+  { import = 'plugins.mini' },
 }
