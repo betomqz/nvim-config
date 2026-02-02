@@ -1,0 +1,8 @@
+require('lazy').setup {
+  { import = 'plugins.guess-indent' },
+  { import = 'plugins.gitsigns' },
+  { import = 'plugins.telescope' },
+  { import = 'plugins.nvim-lspconfig' },
+  { import = 'plugins.conform' },
+  { import = 'plugins.which-key' },
+}
