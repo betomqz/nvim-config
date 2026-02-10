@@ -125,6 +125,32 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Automatically start treesitter when opening these files
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = {
+    'bash',
+    'c',
+    'diff',
+    'html',
+    'lua',
+    'luadoc',
+    'markdown',
+    'markdown_inline',
+    'query',
+    'vim',
+    'vimdoc',
+    'rust',
+    'python',
+    'asm',
+    'java',
+    'javadoc',
+    'sql',
+  },
+  callback = function()
+    vim.treesitter.start()
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
