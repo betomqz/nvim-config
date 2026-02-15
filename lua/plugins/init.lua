@@ -10,4 +10,5 @@ require('lazy').setup {
   { import = 'plugins.which-key' },
   { import = 'plugins.todo-comments' },
   { import = 'plugins.mini' },
+  { import = 'plugins.vimtex' },
 }
