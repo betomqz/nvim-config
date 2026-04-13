@@ -34,7 +34,11 @@ statusline.section_location = function()
 end
 
 -- Git diff
-require('mini.diff').setup()
+require('mini.diff').setup {
+    view = {
+        style = 'sign',
+    },
+}
 vim.keymap.set('n', '<leader>go', require 'mini.diff'.toggle_overlay, { desc = 'Diff: Toggle diff overlay' })
 
 -- ... and there is more!
