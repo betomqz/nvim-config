@@ -152,8 +152,7 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 -- [[ Configure and install plugins ]]
-
--- Load plugins. See `lua/plugins/`.
+-- See `lua/plugins/`.
 require 'plugins'
 
 -- The line beneath this is called `modeline`. See `:help modeline`

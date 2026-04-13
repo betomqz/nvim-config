@@ -1,6 +1,6 @@
 require 'plugins.catppuccin'
 require 'plugins.telescope'
--- require 'plugins.nvim-lspconfig'
--- require 'plugins.nvim-treesitter'
+require 'plugins.nvim-lspconfig'
+require 'plugins.nvim-treesitter'
 -- require 'plugins.mini'
 -- require 'plugins.vimtex'

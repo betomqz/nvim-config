@@ -1,36 +1,39 @@
-return {
-  -- Main LSP Configuration
-  'neovim/nvim-lspconfig',
-  dependencies = {
-    -- Automatically install LSPs and related tools to stdpath for Neovim
-    -- Mason must be loaded before its dependents so we need to set it up here.
-    -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-    { 'mason-org/mason.nvim', opts = {} },
-    'WhoIsSethDaniel/mason-tool-installer.nvim',
+-- Mason must be loaded before its dependents so we need to set it up here.
+vim.pack.add {
+    { src = 'https://github.com/mason-org/mason.nvim' },
+}
+require('mason').setup {}
 
-    -- Useful status updates for LSP.
-    { 'j-hui/fidget.nvim', opts = {} },
+vim.pack.add {
+    -- Automatically install LSPs and related tools to stdpath for Neovim
+    { src = 'https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim' },
 
     -- Allows extra capabilities provided by blink.cmp
-    'saghen/blink.cmp',
-  },
-  config = function()
-    --  This function gets run when an LSP attaches to a particular buffer.
-    --    That is to say, every time a new file is opened that is associated with
-    --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
-    --    function will be executed to configure the current buffer
-    vim.api.nvim_create_autocmd('LspAttach', {
-      group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
-      callback = function(event)
+    -- { src = 'https://github.com/saghen/blink.cmp' },
+
+    -- lspconfig
+    { src = 'https://github.com/neovim/nvim-lspconfig' },
+}
+
+--  This function gets run when an LSP attaches to a particular buffer.
+--    That is to say, every time a new file is opened that is associated with
+--    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
+--    function will be executed to configure the current buffer
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
+    callback = function(event)
         -- NOTE: Remember that Lua is a real programming language, and as such it is possible
         -- to define small helper and utility functions so you don't have to repeat yourself.
         --
         -- In this case, we create a function that lets us more easily define mappings specific
         -- for LSP related items. It sets the mode, buffer and description for us each time.
         local map = function(keys, func, desc, mode)
-          mode = mode or 'n'
-          vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+            mode = mode or 'n'
+            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
         end
+
+        -- Format the current buffer
+        map('<leader>f', vim.lsp.buf.format, '[F]ormat buffer')
 
         -- Rename the variable under your cursor.
         --  Most Language Servers support renaming across files, etc.
@@ -51,72 +54,71 @@ return {
         -- When you move your cursor, the highlights will be cleared (the second autocommand).
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         if client and client:supports_method('textDocument/documentHighlight', event.buf) then
-          local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-          vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-            buffer = event.buf,
-            group = highlight_augroup,
-            callback = vim.lsp.buf.document_highlight,
-          })
+            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+                buffer = event.buf,
+                group = highlight_augroup,
+                callback = vim.lsp.buf.document_highlight,
+            })
 
-          vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-            buffer = event.buf,
-            group = highlight_augroup,
-            callback = vim.lsp.buf.clear_references,
-          })
+            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+                buffer = event.buf,
+                group = highlight_augroup,
+                callback = vim.lsp.buf.clear_references,
+            })
 
-          vim.api.nvim_create_autocmd('LspDetach', {
-            group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-            callback = function(event2)
-              vim.lsp.buf.clear_references()
-              vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-            end,
-          })
+            vim.api.nvim_create_autocmd('LspDetach', {
+                group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+                callback = function(event2)
+                    vim.lsp.buf.clear_references()
+                    vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+                end,
+            })
         end
-      end,
-    })
+    end,
+})
 
-    -- LSP servers and clients are able to communicate to each other what features they support.
-    --  By default, Neovim doesn't support everything that is in the LSP specification.
-    --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
-    --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-    local capabilities = require('blink.cmp').get_lsp_capabilities()
+-- LSP servers and clients are able to communicate to each other what features they support.
+--  By default, Neovim doesn't support everything that is in the LSP specification.
+--  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
+--  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
+-- require('blink.cmp').setup {}
+-- local capabilities = require('blink.cmp').get_lsp_capabilities()
 
-    -- Enable the following language servers
-    --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-    --  See `:help lsp-config` for information about keys and how to configure
-    local servers = {
-      lua_ls = {},
-      -- clangd = {},
-      -- gopls = {},
-      pyright = {},
-      -- rust_analyzer = {},
-      --
-      -- Some languages (like typescript) have entire language plugins that can be useful:
-      --    https://github.com/pmizio/typescript-tools.nvim
-      --
-      -- But for many setups, the LSP (`ts_ls`) will work just fine
-      -- ts_ls = {},
-    }
-
-    -- Ensure the servers and tools above are installed
+-- Enable the following language servers
+--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
+--  See `:help lsp-config` for information about keys and how to configure
+local servers = {
+    lua_ls = {},
+    -- clangd = {},
+    -- gopls = {},
+    pyright = {},
+    -- rust_analyzer = {},
     --
-    -- To check the current status of installed tools and/or manually install
-    -- other tools, you can run
-    --    :Mason
+    -- Some languages (like typescript) have entire language plugins that can be useful:
+    --    https://github.com/pmizio/typescript-tools.nvim
     --
-    -- -- You can press `g?` for help in this menu.
-    local mason_packages = {
-      'lua-language-server', -- Lua Language server
-      'stylua', -- Used to format Lua code
-      'pyright',
-    }
-
-    require('mason-tool-installer').setup { ensure_installed = mason_packages }
-
-    for name, server in pairs(servers) do
-      server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-      vim.lsp.config(name, server)
-      vim.lsp.enable(name)
-    end
-  end,
+    -- But for many setups, the LSP (`ts_ls`) will work just fine
+    -- ts_ls = {},
 }
+
+-- Ensure the servers and tools above are installed
+--
+-- To check the current status of installed tools and/or manually install
+-- other tools, you can run
+--    :Mason
+--
+-- -- You can press `g?` for help in this menu.
+local mason_packages = {
+    'lua-language-server', -- Lua Language server
+    'stylua',              -- Used to format Lua code
+    'pyright',
+}
+
+require('mason-tool-installer').setup { ensure_installed = mason_packages }
+
+for name, server in pairs(servers) do
+    -- server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+    vim.lsp.config(name, server)
+    vim.lsp.enable(name)
+end
