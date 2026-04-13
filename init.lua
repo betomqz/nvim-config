@@ -111,6 +111,12 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- Open netrw
 vim.keymap.set('n', '<leader>e', '<cmd>Exp<CR>', { desc = 'Open file [E]xplorer (netrw)' })
 
+-- Copy file name
+vim.keymap.set('n', '<leader>cf', function()
+  vim.fn.setreg('+', vim.fn.expand '%:t')
+  print 'Copied filename to clipboard'
+end, { desc = '[C]opy [F]ilename to clipboard', noremap = true, silent = true })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
